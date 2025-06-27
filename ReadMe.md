@@ -57,7 +57,7 @@ A scalable, modular Go web application framework using [Fiber](https://gofiber.i
 Use gonext CLI to start a new project. First install gonext CLI
 
 ```bash
-go install github.com/Alexigbokwe/goNext_CLI@latest
+go install github.com/Alexigbokwe/gonext@latest
 ```
 
 Once gonext CLI is installed, you can now start a new project with the below command.
