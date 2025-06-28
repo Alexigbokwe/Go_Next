@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"goNext/app"
 	"goNext/internal/user/controller"
 	"goNext/internal/user/repository"
@@ -16,6 +17,18 @@ type UserModule struct {
 
 func NewUserModule() *UserModule {
 	return &UserModule{}
+}
+
+// Called when a module is initialized.
+func (m *UserModule) OnModuleInit() error {
+	fmt.Println("UserModule initialized!")
+	return nil
+}
+
+// Called when a module is destroyed.
+func (m *UserModule) OnModuleDestroy() error {
+	fmt.Println("UserModule destroyed!")
+	return nil
 }
 
 func (m *UserModule) Register(container *app.Container) {
