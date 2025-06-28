@@ -22,7 +22,14 @@ func NewApp() *App {
 }
 
 func (a *App) Listen(addr string) {
+	//
 	a.App.Use(recover.New())
+
+	// Default GET route
+	a.App.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Welcome to GoNext framework")
+	})
+
 	if err := a.App.Listen(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

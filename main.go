@@ -27,12 +27,15 @@ package main
 
 import (
 	goNext "goNext/app"
+	"goNext/config"
 	globalMiddleware "goNext/global/globalMiddleware"
 	userModule "goNext/internal/user"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/spf13/viper"
 )
 
 func registerGlobalMiddleware(app *goNext.App) {
@@ -46,6 +49,7 @@ func registerModules() []goNext.Module {
 }
 
 func main() {
+	config.LoadConfig()
 	app := goNext.NewApp()
 	container := goNext.NewContainer()
 	registerGlobalMiddleware(app)
@@ -54,7 +58,7 @@ func main() {
 	app.InitModules(modules, container)
 
 	go func() {
-		app.Listen(":5050")
+		app.Listen(":" + viper.GetString("SERVER_PORT"))
 	}()
 
 	// Wait for interrupt signal to gracefully shutdown

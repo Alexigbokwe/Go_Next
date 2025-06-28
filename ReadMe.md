@@ -83,6 +83,48 @@ gonext new <project_name>
 
 ---
 
+## Development
+
+### Live Reload Setup
+
+For development with automatic reloading (similar to nodemon in Node.js):
+
+1. **Install Air** (live reload tool):
+
+   ```bash
+   go install github.com/cosmtrek/air@latest
+   # or use the Makefile
+   make install-air
+   ```
+
+2. **Start development server with live reload**:
+
+   ```bash
+   air
+   # or use the Makefile
+   make dev
+   ```
+
+3. **Alternative commands**:
+
+   ```bash
+   # Run without live reload
+   make run
+
+   # Build for production
+   make build
+
+   # Run tests
+   make test
+
+   # Clean build artifacts
+   make clean
+   ```
+
+The application will automatically restart when you save changes to any `.go` files.
+
+---
+
 ## Usage
 
 ### 1. **Creating a Module**
