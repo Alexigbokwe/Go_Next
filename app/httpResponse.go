@@ -9,7 +9,15 @@ type HttpResponseType[T interface{}] struct {
 	Data    T      `json:"data,omitempty"`
 }
 
-func HttpSuccessResponse(message string, code int, data interface{}) HttpResponseType[interface{}] {
+func HttpSuccess(message string, code int) HttpResponseType[interface{}] {
+	return HttpResponseType[interface{}]{
+		Code:    code,
+		Message: message,
+		Status:  true,
+	}
+}
+
+func HttpSuccessWithData(message string, code int, data interface{}) HttpResponseType[interface{}] {
 	return HttpResponseType[interface{}]{
 		Code:    code,
 		Message: message,
@@ -18,7 +26,35 @@ func HttpSuccessResponse(message string, code int, data interface{}) HttpRespons
 	}
 }
 
-func HttpErrorResponse(message string, code int, data interface{}, err error) HttpResponseType[interface{}] {
+func HttpError(message string, code int) HttpResponseType[interface{}] {
+	return HttpResponseType[interface{}]{
+		Code:    code,
+		Message: message,
+		Status:  false,
+	}
+}
+
+func HttpErrorWithData(message string, code int, data interface{}) HttpResponseType[interface{}] {
+	return HttpResponseType[interface{}]{
+		Code:    code,
+		Message: message,
+		Status:  false,
+		Data:    data,
+	}
+}
+
+func HttpErrorWithLog(message string, code int, err error) HttpResponseType[interface{}] {
+	if err != nil {
+		log.Printf("Error: %s: %v", message, err)
+	}
+	return HttpResponseType[interface{}]{
+		Code:    code,
+		Message: message,
+		Status:  false,
+	}
+}
+
+func HttpErrorWithDataAndLog(message string, code int, data interface{}, err error) HttpResponseType[interface{}] {
 	if err != nil {
 		log.Printf("Error: %s: %v", message, err)
 	}
