@@ -14,15 +14,11 @@ type UserController struct {
 
 // GetUsers handles the request to get users
 func (uc *UserController) GetUsers(c *fiber.Ctx) error {
-	users, err := uc.UserService.GetUsers()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to retrieve users",
-		})
+	result := uc.UserService.GetUsers()
+	if !result.Status {
+		return c.Status(result.Code).JSON(result)
 	}
-	return c.JSON(fiber.Map{
-		"users": users,
-	})
+	return c.Status(result.Code).JSON(result)
 }
 
 // CreateUser handles the request to create a user

@@ -87,7 +87,7 @@ gonext new <project_name>
 
 ### Live Reload Setup
 
-For development with automatic reloading (similar to nodemon in Node.js):
+For development with automatic reloading:
 
 1. **Install Air** (live reload tool):
 
