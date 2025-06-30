@@ -236,6 +236,52 @@ modules := []app.Module{
 }
 ```
 
+### 7. **Standardized HTTP Responses (Success & Error Helpers)**
+
+GoNext provides generic helpers for standardized API responses, similar to patterns in Node.js/TypeScript projects.
+
+**Define a generic response type and helpers (already available in `app/`):**
+
+```go
+// app/httpResponse.go (example)
+type HttpResponseType[T any] struct {
+    Code    int    `json:"code"`
+    Message string `json:"message"`
+    Status  bool   `json:"status"`
+    Data    *T     `json:"data,omitempty"`
+}
+
+func HttpSuccessWithData[T any](message string, code int, data *T) HttpResponseType[T] { /* ... */ }
+func HttpError(message string, code int) HttpResponseType[any] { /* ... */ }
+func HttpErrorWithLog(message string, code int, err error) HttpResponseType[any] { /* ... */ }
+```
+
+**Usage in a service:**
+
+```go
+func (us *UserService) GetUsers() app.HttpResponseType[any] {
+    if us.UserRepository == nil {
+        return app.HttpError("Can't process task at this time, try again", app.HttpStatus.InternalServerError)
+    }
+    users, err := us.UserRepository.FindAll()
+    if err != nil {
+        return app.HttpErrorWithLog("Error occurred, try again later", app.HttpStatus.ExpectationFailed, err)
+    }
+    return app.HttpSuccessWithData("User successfully fetched", app.HttpStatus.OK, users)
+}
+```
+
+**Usage in a controller:**
+
+```go
+func (uc *UserController) GetUsers(c *fiber.Ctx) error {
+    result := uc.UserService.GetUsers()
+    return c.Status(result.Code).JSON(result)
+}
+```
+
+This pattern ensures all your API responses are consistent, easy to test, and easy to consume on the frontend.
+
 ---
 
 ## Global Error Handling
