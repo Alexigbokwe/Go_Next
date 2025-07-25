@@ -32,6 +32,7 @@ type Container struct {
 	scopedInstances map[string]map[reflect.Type]any // scopeKey -> type -> instance
 	scopedTokens    map[string]map[string]any       // scopeKey -> token -> instance
 	lock            sync.RWMutex
+	pendingAutowire []any
 }
 
 func NewContainer() *Container {
@@ -40,6 +41,7 @@ func NewContainer() *Container {
 		tokenServices:   make(map[string]*ServiceRegistration),
 		scopedInstances: make(map[string]map[reflect.Type]any),
 		scopedTokens:    make(map[string]map[string]any),
+		pendingAutowire: make([]any, 0),
 	}
 }
 
@@ -523,4 +525,31 @@ func (c *Container) MustAutowire(target any) {
 	if err := c.Autowire(target); err != nil {
 		panic(err)
 	}
+}
+
+/**
+ * AddForAutowiring adds a component to the pending autowire list.
+ * This is useful for components that need to be autowired after all registrations are done.
+ * It allows you to register components that will be autowired later, ensuring they are resolved
+ * with the correct dependencies when AutowireAll is called.
+ */
+func (c *Container) AddForAutowiring(component any) {
+	if c.pendingAutowire == nil {
+		c.pendingAutowire = make([]any, 0)
+	}
+	c.pendingAutowire = append(c.pendingAutowire, component)
+}
+
+/**
+ * AutowireAll resolves all pending components that were added for autowiring
+ * This is useful for batch autowiring after all components have been registered
+ */
+func (c *Container) AutowireAll() error {
+	for _, component := range c.pendingAutowire {
+		if err := c.Autowire(component); err != nil {
+			return fmt.Errorf("failed to autowire %T: %w", component, err)
+		}
+	}
+	c.pendingAutowire = nil // Clear after autowiring
+	return nil
 }

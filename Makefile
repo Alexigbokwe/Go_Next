@@ -2,7 +2,7 @@
 
 # Development with live reload
 dev:
-	$(shell go env GOPATH)/bin/air
+	air
 
 # Build the application
 build:
